@@ -8,6 +8,77 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="bin\Озвучка\0.mp3" />
+    <Content Include="bin\Озвучка\1.mp3" />
+    <Content Include="bin\Озвучка\10.mp3" />
+    <Content Include="bin\Озвучка\100.mp3" />
+    <Content Include="bin\Озвучка\11.mp3" />
+    <Content Include="bin\Озвучка\12.mp3" />
+    <Content Include="bin\Озвучка\13.mp3" />
+    <Content Include="bin\Озвучка\14.mp3" />
+    <Content Include="bin\Озвучка\15.mp3" />
+    <Content Include="bin\Озвучка\16.mp3" />
+    <Content Include="bin\Озвучка\17.mp3" />
+    <Content Include="bin\Озвучка\18.mp3" />
+    <Content Include="bin\Озвучка\19.mp3" />
+    <Content Include="bin\Озвучка\2.mp3" />
+    <Content Include="bin\Озвучка\20.mp3" />
+    <Content Include="bin\Озвучка\200.mp3" />
+    <Content Include="bin\Озвучка\3.mp3" />
+    <Content Include="bin\Озвучка\30.mp3" />
+    <Content Include="bin\Озвучка\300.mp3" />
+    <Content Include="bin\Озвучка\4.mp3" />
+    <Content Include="bin\Озвучка\40.mp3" />
+    <Content Include="bin\Озвучка\400.mp3" />
+    <Content Include="bin\Озвучка\5.mp3" />
+    <Content Include="bin\Озвучка\50.mp3" />
+    <Content Include="bin\Озвучка\500.mp3" />
+    <Content Include="bin\Озвучка\6.mp3" />
+    <Content Include="bin\Озвучка\60.mp3" />
+    <Content Include="bin\Озвучка\600.mp3" />
+    <Content Include="bin\Озвучка\7.mp3" />
+    <Content Include="bin\Озвучка\70.mp3" />
+    <Content Include="bin\Озвучка\700.mp3" />
+    <Content Include="bin\Озвучка\8.mp3" />
+    <Content Include="bin\Озвучка\80.mp3" />
+    <Content Include="bin\Озвучка\800.mp3" />
+    <Content Include="bin\Озвучка\9.mp3" />
+    <Content Include="bin\Озвучка\90.mp3" />
+    <Content Include="bin\Озвучка\900.mp3" />
+    <Content Include="bin\Озвучка\А.mp3" />
+    <Content Include="bin\Озвучка\Б.mp3" />
+    <Content Include="bin\Озвучка\В КАССУ.mp3" />
+    <Content Include="bin\Озвучка\В ОФИС СБЕРБАНКА.mp3" />
+    <Content Include="bin\Озвучка\В.mp3" />
+    <Content Include="bin\Озвучка\В12.mp3" />
+    <Content Include="bin\Озвучка\В16.mp3" />
+    <Content Include="bin\Озвучка\ВКАБИНЕТ.mp3" />
+    <Content Include="bin\Озвучка\ВНИМАНИЕ.mp3" />
+    <Content Include="bin\Озвучка\Г.mp3" />
+    <Content Include="bin\Озвучка\Д.mp3" />
+    <Content Include="bin\Озвучка\Е.mp3" />
+    <Content Include="bin\Озвучка\Ж.mp3" />
+    <Content Include="bin\Озвучка\З.mp3" />
+    <Content Include="bin\Озвучка\ЗА10МИНДОТЕХПЕРЕРЫВА.mp3" />
+    <Content Include="bin\Озвучка\К.mp3" />
+    <Content Include="bin\Озвучка\КАДМИНИСТРАТОРУ.mp3" />
+    <Content Include="bin\Озвучка\КЛИЕНТА.mp3" />
+    <Content Include="bin\Озвучка\КОКНУ.mp3" />
+    <Content Include="bin\Озвучка\Л.mp3" />
+    <Content Include="bin\Озвучка\Н.mp3" />
+    <Content Include="bin\Озвучка\НОМЕР.mp3" />
+    <Content Include="bin\Озвучка\НОТАРИУСА.mp3" />
+    <Content Include="bin\Озвучка\П.mp3" />
+    <Content Include="bin\Озвучка\ПРИГЛАШАЮТПРОЙТИ.mp3" />
+    <Content Include="bin\Озвучка\Р.mp3" />
+    <Content Include="bin\Озвучка\С.mp3" />
+    <Content Include="bin\Озвучка\СБЕРБАНКА.mp3" />
+    <Content Include="bin\Озвучка\Ю.mp3" />
+    <Content Include="bin\Озвучка\ЮРИСТ.mp3" />
+    <Content Include="bin\Озвучка\ЮРИСТА.mp3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="4.9.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.13" />
