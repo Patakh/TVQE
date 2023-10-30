@@ -12,6 +12,17 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using static Function.Tickets;
+using System.Speech.Synthesis;
+using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
+using System.Net.Http.Json;
+using Microsoft.EntityFrameworkCore.Metadata;
+using System.Media;
+using static System.Net.Mime.MediaTypeNames;
+using System.Windows.Shapes;
+using System.Reflection;
+using TVQE.Models;
 
 namespace TVQE
 {
@@ -21,7 +32,17 @@ namespace TVQE
     public partial class MainWindow : Window
     {
         public DispatcherTimer timer;
+
         public string Ip { get; set; }
+        MediaElement mediaElement;
+
+        /// <summary>
+        /// вызванные талоны
+        /// </summary> 
+        List<CallTickets> CallTickets = new List<CallTickets>();
+        List<string> audioFiles;
+
+        private int currentIndex;
         public MainWindow()
         {
             InitializeComponent();
@@ -48,7 +69,7 @@ namespace TVQE
         #region Server
         public async Task StartListeningAsync(Window window, string ip)
         {
-            TcpListener listener = new TcpListener(IPAddress.Parse(ip), 1234);
+            TcpListener listener = new TcpListener(IPAddress.Parse(ip), 1235);
             listener.Start();
             Console.WriteLine("Сервер запущен. Ожидание подключений...");
 
@@ -91,33 +112,17 @@ namespace TVQE
 
                     switch (type)
                     {
-                        case "Call":
-                            CallTicket(Convert.ToInt64(value));
-                             await Task.Delay(10000);
-                            Call.Visibility = Visibility.Collapsed;
-                            Reklams.Visibility = Visibility.Visible;
+                        case "Call": 
+                                EqContext context = new EqContext();
+                                var TicketCall = context.DTickets.First(t => t.Id == Convert.ToInt64(value));
+                                var windowName = context.SOfficeWindows.First(w => w.Id == TicketCall.SOfficeWindowId).WindowName;
+                                CallTickets.Add(new CallTickets(TicketCall.ServicePrefix, TicketCall.TicketNumber.ToString(), windowName));
+                                if(CallTickets.Count==1)  await CallTicket(); 
+                            
                             break;
                     }
                 }
             }
-        }
-        #endregion
-
-        #region Вызов талона
-        private void CallTicket(long ticketId)
-        {
-            try
-            {
-                Call.Visibility = Visibility.Visible;
-                Reklams.Visibility = Visibility.Collapsed;
-                EqContext context = new EqContext();
-                var TicketCall = context.DTickets.First(t => t.Id == ticketId);
-                CallTicketName.Text = TicketCall.TicketNumberFull;
-                CallWindow.Text = context.SOfficeWindows.First(w=>w.Id == TicketCall.SOfficeWindowId).WindowName;
-
-            }
-            catch (Exception ex) { 
-            } 
         }
         #endregion
 
@@ -258,5 +263,71 @@ namespace TVQE
             HeaderTextBlock.Children.Add(textBlockdddd);
         }
         #endregion
+
+        #region Вызов талона
+        private async Task CallTicket()
+        {
+            MediaElement.Children.Clear();
+            try
+            {  
+                foreach (var tickets in CallTickets)
+                {
+                    mediaElement = new MediaElement();
+                    MediaElement.Children.Clear();
+                    audioFiles = tickets.AudioFiles;
+                    currentIndex = 0;
+                    // Добавь MediaElement на контейнер (Grid, StackPanel, и т.д.)
+                    MediaElement.Children.Add(mediaElement);
+                    // Подпишись на событие MediaEnded для переключения на следующий аудиофайл
+                    mediaElement.MediaEnded += async (s, e) => {
+                        await MediaElement_MediaEnded(s, e);
+                    };
+                    // Запуск проигрывания первого аудиофайла
+                    mediaElement.Source = new Uri(tickets.AudioFiles[currentIndex]);
+                    await  Task.Run(() =>
+                    { 
+                        mediaElement.Play();
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        private async Task MediaElement_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            // Переключение на следующий аудиофайл, если он есть
+            if (currentIndex < audioFiles.Count - 1)
+            {
+                try
+                {
+                    currentIndex++;
+                    mediaElement = new MediaElement();
+                    MediaElement.Children.Clear();
+                    MediaElement.Children.Add(mediaElement);
+                    mediaElement.MediaEnded += async (s, e) => {
+                        await MediaElement_MediaEnded(s, e);
+                    };
+                    mediaElement.Source = new Uri(audioFiles[currentIndex]);
+                    await Task.Run(() =>
+                    {
+                        mediaElement.Play();
+                    });
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+            else
+            {
+               
+               if(CallTickets.Count>0) CallTickets.Remove(CallTickets[0]);
+                await CallTicket();
+            }
+        }
+        #endregion
+
     }
 }

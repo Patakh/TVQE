@@ -33,11 +33,9 @@
             <StackPanel Grid.Column="0" x:Name="ListQE" Margin="0,0,10,0">
 
             </StackPanel>
-
-            <StackPanel Grid.Column="1" x:Name="Reklams" Background="Blue">
-
+            <StackPanel Grid.Column="1" x:Name="MediaElement">
+                
             </StackPanel>
-
             <StackPanel Grid.Column="2" x:Name="Call"  VerticalAlignment="Center" Orientation="Vertical" Visibility="Collapsed">
                 <TextBlock x:Name="CallTicketName" FontSize="150" Foreground="Brown" TextAlignment="Center" Width="300"/>
                 <TextBlock  FontSize="100" Foreground="Green" Text="🔰"  TextAlignment="Center"/>
