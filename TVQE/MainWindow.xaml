@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="TV" 
         WindowState="Maximized">
-    <Grid x:Name="GridMain" Margin="40,40,40,40">
+    <Grid x:Name="GridMain" Margin="30,30,30,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -27,10 +27,11 @@
         <Grid Grid.Row="1" Background="#fff" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" x:Name="ListQE" Margin="0,0,10,0">
+            <StackPanel Grid.Column="0" x:Name="ListQE" Margin="0,0,0,0" HorizontalAlignment="Center" Background="Azure" Width="800">
 
             </StackPanel>
             <StackPanel Grid.Column="1" x:Name="MediaElement">
@@ -38,19 +39,21 @@
             </StackPanel>
             <StackPanel Grid.Column="2" x:Name="Call"  VerticalAlignment="Center" Orientation="Vertical" Visibility="Collapsed">
                 <TextBlock x:Name="CallTicketName" FontSize="150" Foreground="Brown" TextAlignment="Center" Width="300"/>
-                <TextBlock  FontSize="100" Foreground="Green" Text="🔰"  TextAlignment="Center"/>
+                <TextBlock  FontSize="100" Foreground="Green" Text="🔻" TextAlignment="Center"/>
                 <TextBlock x:Name="CallWindow" FontSize="150" Foreground="Brown" TextAlignment="Center"/>
             </StackPanel>
+            <StackPanel Grid.Column="3" x:Name="MediaElementVideo" Height="1000" Width="1500" HorizontalAlignment="Center"> 
+            </StackPanel> 
         </Grid>
 
         <!-- Нижний колонтитул -->
-        <Grid Grid.Row="2" Height="150" >
+        <Grid Grid.Row="2" Height="150" VerticalAlignment="Bottom">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions> 
-                <Canvas x:Name="canvas" Height="10" Grid.Column="0">
-                    <TextBlock x:Name="runningText" FontSize="35" Canvas.Left="0" Canvas.Top="0" Text="Если заявитель не подошел, то есть статус остался 2 , то нужно еще раз вызвать с интервалом 30 сек. Если заявитель не подошел, то есть статус остался 2 , то нужно еще раз вызвать с интервалом 30 сек. Если заявитель не подошел, то есть статус остался 2 , то нужно еще раз вызвать с интервалом 30 сек.Если заявитель не подошел, то есть статус остался 2 , то нужно еще раз вызвать с интервалом 30 сек.Если заявитель не подошел, то есть статус остался 2 , то нужно еще раз вызвать с интервалом 30 сек."/>
-                </Canvas> 
+            </Grid.ColumnDefinitions>
+            <Canvas x:Name="canvas" Height="10" Grid.Column="0">
+                <TextBlock  Foreground="White" Background="Brown"  x:Name="runningText" FontSize="35" Canvas.Left="0" Canvas.Top="0" Text="Если заявитель не подошел, то есть статус остался 2 , то нужно еще раз вызвать с интервалом 30 сек. Если заявитель не подошел, то есть статус остался 2 , то нужно еще раз вызвать с интервалом 30 сек. Если заявитель не подошел, то есть статус остался 2 , то нужно еще раз вызвать с интервалом 30 сек.Если заявитель не подошел, то есть статус остался 2 , то нужно еще раз вызвать с интервалом 30 сек.Если заявитель не подошел, то есть статус остался 2 , то нужно еще раз вызвать с интервалом 30 сек."/>
+             </Canvas> 
         </Grid>
     </Grid>
 </Window>

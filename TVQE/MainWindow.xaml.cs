@@ -35,36 +35,84 @@ namespace TVQE
 
         public string Ip { get; set; }
         MediaElement mediaElement;
-
+        MediaElement mediaElementVideo;
         /// <summary>
         /// вызванные талоны
         /// </summary> 
         List<CallTickets> CallTickets = new List<CallTickets>();
         List<string> audioFiles;
-
+        List<string> audioFilesVideo;
+        private int currentIndexVideo;
         private int currentIndex;
         public MainWindow()
         {
             InitializeComponent();
+            WindowStyle = WindowStyle.None;
             try
             {
                 GetIp();
                 //подключение к базе
                 EqContext eqContext = new EqContext();
-
                 // Офис  
                 HeaderTextBlockOfice.Text = eqContext.SOffices.First(l => l.Id == eqContext.SOfficeScoreboards.First(g => g.ScoreboardIp == Ip).SOfficeId).OfficeName;
                 runningText.Text = eqContext.SOfficeScoreboardTexts.First(l => l.IsActive && l.SOfficeScoreboardId == eqContext.SOfficeScoreboards.First(g => g.ScoreboardIp == Ip).Id).TextMonitor.ToString();
-
+               
             }
             catch (Exception ex)
             {
 
             }
+
+            VideoPlay();
             Table();
             StartRunningTextAnimation();
             DateTimeView();
         }
+        #region Video
+        private void VideoPlay()
+        {
+            var path = System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.AppDomain.CurrentDomain.BaseDirectory)));
+            var pachVideo1 = path + "\\Video\\v1.mp4";
+            var pachVideo2 = path + "\\Video\\v2.mp4";
+            var pachVideo3 = path + "\\Video\\v3.mp4";
+
+            audioFilesVideo = new List<string> {
+                    pachVideo1,
+                    pachVideo2,
+                    pachVideo3,
+            };
+
+            MediaElementVideo.Children.Clear();
+            mediaElementVideo = new MediaElement();
+            MediaElementVideo.Children.Add(mediaElementVideo);
+            mediaElementVideo.Source = new Uri(audioFilesVideo[currentIndexVideo]);
+            mediaElementVideo.LoadedBehavior = MediaState.Manual;
+            mediaElementVideo.UnloadedBehavior = MediaState.Play;
+            mediaElementVideo.Play();
+
+            mediaElementVideo.MediaEnded += (s, e) =>
+            { 
+                MediaEndedVideo(s,e); 
+            };
+        }
+        private void MediaEndedVideo(object sender, RoutedEventArgs e)
+        {
+            currentIndexVideo++;
+            if (currentIndexVideo == audioFilesVideo.Count() - 1) currentIndexVideo = 0;
+            MediaElementVideo.Children.Clear();
+            mediaElementVideo = new MediaElement();
+            mediaElementVideo.Source = new Uri(audioFilesVideo[currentIndexVideo]);
+            mediaElementVideo.LoadedBehavior = MediaState.Manual;
+            mediaElementVideo.UnloadedBehavior = MediaState.Play; 
+            MediaElementVideo.Children.Add(mediaElementVideo);
+            mediaElementVideo.Play();
+            mediaElementVideo.MediaEnded += (s, e) =>
+            {
+                MediaEndedVideo(s, e);
+            };
+        }
+        #endregion
+
 
         #region Server
         public async Task StartListeningAsync(Window window, string ip)
@@ -79,6 +127,7 @@ namespace TVQE
                 _ = HandleClientAsync(client);
             }
         }
+
 
         private async Task HandleClientAsync(TcpClient client)
         {
@@ -112,13 +161,20 @@ namespace TVQE
 
                     switch (type)
                     {
-                        case "Call": 
+                        case "Call":
+                            try
+                            { 
                                 EqContext context = new EqContext();
                                 var TicketCall = context.DTickets.First(t => t.Id == Convert.ToInt64(value));
                                 var windowName = context.SOfficeWindows.First(w => w.Id == TicketCall.SOfficeWindowId).WindowName;
                                 CallTickets.Add(new CallTickets(TicketCall.ServicePrefix, TicketCall.TicketNumber.ToString(), windowName));
-                                if(CallTickets.Count==1)  await CallTicket(); 
-                            
+                                Call.Visibility = Visibility.Visible;
+                                mediaElementVideo.Visibility = Visibility.Collapsed;
+                                if (CallTickets.Count == 1) await CallTicket();
+                            }
+                            catch (Exception ex)
+                            {
+                            }
                             break;
                     }
                 }
@@ -134,43 +190,62 @@ namespace TVQE
                 EqContext eqContext = new EqContext();
                 var tickets = Tickets.SelectTicketServed(eqContext.SOfficeScoreboards.First(r => r.ScoreboardIp == Ip).Id);
                 ListQE.Children.Clear();
+                WrapPanel wrapPanelH = new WrapPanel();
+                wrapPanelH.Width= 800;
+                wrapPanelH.Margin = new Thickness(0, 15, 0, 15);
+                WrapPanel wrapPanel1H = new WrapPanel();
+                wrapPanel1H.HorizontalAlignment= HorizontalAlignment.Center; 
+                TextBlock textBlock1H = new TextBlock();
+                textBlock1H.FontSize = 50;
+                wrapPanel1H.Width= 400;
+                textBlock1H.TextAlignment = TextAlignment.Center;
+                textBlock1H.FontFamily = new FontFamily("Arial");
+                textBlock1H.Text = "КЛИЕНТ";
+
+                wrapPanel1H.Children.Add(textBlock1H);
+                wrapPanelH.Children.Add(wrapPanel1H);
+
+                WrapPanel wrapPanel2H = new WrapPanel();
+                wrapPanel2H.HorizontalAlignment = HorizontalAlignment.Center;
+                TextBlock textBlock2H = new TextBlock();
+                textBlock2H.FontSize = 50;
+                wrapPanel2H.Width = 400;
+                textBlock2H.TextAlignment = TextAlignment.Center;
+                textBlock2H.FontFamily = new FontFamily("Arial");
+                textBlock2H.Text = "ОКНО";
+
+                wrapPanel2H.Children.Add(textBlock2H);
+                wrapPanelH.Children.Add(wrapPanel2H);
+
+                ListQE.Children.Add(wrapPanelH);
+
                 if (tickets.Any())
                 {
                     tickets.ToList().ForEach(t =>
                     {
                         WrapPanel wrapPanel = new WrapPanel();
-                        wrapPanel.Orientation = Orientation.Horizontal;
-                        wrapPanel.Background = new SolidColorBrush(Colors.SandyBrown);
-                        wrapPanel.Margin = new Thickness(0, 0, 0, 10);
-
-                        WrapPanel wrapPanel1 = new WrapPanel();
-                        wrapPanel1.Orientation = Orientation.Horizontal;
-                        wrapPanel1.HorizontalAlignment = HorizontalAlignment.Left;
-                        wrapPanel1.Width = 400;
-
+                        wrapPanel.Width = 800;
+                        WrapPanel wrapPanel1 = new WrapPanel(); 
                         TextBlock textBlock1 = new TextBlock();
-                        textBlock1.Foreground = new SolidColorBrush(Colors.White);
-                        textBlock1.FontSize = 80;
-                        wrapPanel1.Margin = new Thickness(10, 0, 0, 0);
+                        textBlock1.FontSize = 50;
+                        textBlock1.Width = 400; 
+                        textBlock1.Foreground = new SolidColorBrush(Colors.Brown);
                         textBlock1.FontFamily = new FontFamily("Arial");
-                        textBlock1.Text = "👤 " + t.TicketNumberFull;
+                        textBlock1.Text = t.TicketNumberFull;
                         wrapPanel1.Children.Add(textBlock1);
                         wrapPanel.Children.Add(wrapPanel1);
 
-                        WrapPanel wrapPanel2 = new WrapPanel();
-                        wrapPanel2.Orientation = Orientation.Horizontal;
-                        wrapPanel2.HorizontalAlignment = HorizontalAlignment.Right;
-
+                        WrapPanel wrapPanel2 = new WrapPanel();  
                         TextBlock textBlock2 = new TextBlock();
-                        textBlock2.Foreground = new SolidColorBrush(Colors.White);
-                        textBlock2.FontSize = 80;
+                        textBlock2.Foreground = new SolidColorBrush(Colors.Brown);
+                        textBlock2.FontSize = 50;
+                        textBlock2.Width = 400;
                         textBlock2.FontFamily = new FontFamily("Arial");
                         textBlock2.Text = t.WindowName;
                         wrapPanel2.Children.Add(textBlock2);
                         wrapPanel.Children.Add(wrapPanel2);
 
                         ListQE.Children.Add(wrapPanel);
-
                     });
                 }
             }
@@ -268,9 +343,10 @@ namespace TVQE
         private async Task CallTicket()
         {
             MediaElement.Children.Clear();
-            try
-            {  
-                foreach (var tickets in CallTickets)
+
+            foreach (var tickets in CallTickets)
+            {
+                try
                 {
                     mediaElement = new MediaElement();
                     MediaElement.Children.Clear();
@@ -279,20 +355,21 @@ namespace TVQE
                     // Добавь MediaElement на контейнер (Grid, StackPanel, и т.д.)
                     MediaElement.Children.Add(mediaElement);
                     // Подпишись на событие MediaEnded для переключения на следующий аудиофайл
-                    mediaElement.MediaEnded += async (s, e) => {
+                    mediaElement.MediaEnded += async (s, e) =>
+                    {
                         await MediaElement_MediaEnded(s, e);
                     };
                     // Запуск проигрывания первого аудиофайла
                     mediaElement.Source = new Uri(tickets.AudioFiles[currentIndex]);
-                    await  Task.Run(() =>
-                    { 
-                        mediaElement.Play();
-                    });
+                      
+                    CallTicketName.Text = tickets.Prefix + tickets.Number;
+                    CallWindow.Text = tickets.WindowName;
+                }
+                catch (Exception ex)
+                {
                 }
             }
-            catch (Exception ex)
-            {
-            }
+
         }
 
         private async Task MediaElement_MediaEnded(object sender, RoutedEventArgs e)
@@ -306,14 +383,13 @@ namespace TVQE
                     mediaElement = new MediaElement();
                     MediaElement.Children.Clear();
                     MediaElement.Children.Add(mediaElement);
-                    mediaElement.MediaEnded += async (s, e) => {
+                    mediaElement.MediaEnded += async (s, e) =>
+                    {
                         await MediaElement_MediaEnded(s, e);
                     };
                     mediaElement.Source = new Uri(audioFiles[currentIndex]);
-                    await Task.Run(() =>
-                    {
-                        mediaElement.Play();
-                    });
+                    mediaElement.Play();
+
                 }
                 catch (Exception ex)
                 {
@@ -322,12 +398,14 @@ namespace TVQE
             }
             else
             {
-               
-               if(CallTickets.Count>0) CallTickets.Remove(CallTickets[0]);
+                if (CallTickets.Count > 0) CallTickets.Remove(CallTickets[0]);
                 await CallTicket();
+                Call.Visibility = Visibility.Collapsed;
+                mediaElementVideo.Visibility = Visibility.Visible;
+                mediaElementVideo.Play();
             }
         }
         #endregion
-
+         
     }
 }

@@ -5,9 +5,12 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="bin\Video\v3.mp4" />
+    <Content Include="bin\Video\v2.mp4" />
     <Content Include="bin\Озвучка\0.mp3" />
     <Content Include="bin\Озвучка\1.mp3" />
     <Content Include="bin\Озвучка\10.mp3" />
@@ -92,6 +95,10 @@
 
   <ItemGroup>
     <Folder Include="Context\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Video\v1.mp4" />
   </ItemGroup>
 
 </Project>

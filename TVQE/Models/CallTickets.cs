@@ -19,134 +19,75 @@ namespace TVQE.Models
             Prefix = prefix;
             Number = number;
             WindowName = windowName;
-
+            int nuberT = Convert.ToInt32(number);
             var path = System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.AppDomain.CurrentDomain.BaseDirectory)));
-
-            if (Convert.ToInt32(number) % 100 == 0)
-            {
-                AudioFiles = new List<string>()
+            AudioFiles = new List<string>()
                 {
                     path+"\\Озвучка\\ВНИМАНИЕ.mp3",
                     path+"\\Озвучка\\КЛИЕНТА.mp3",
-                    path+"\\Озвучка\\НОМЕР.mp3",
-                    path+"\\Озвучка\\" + prefix + ".mp3",
-                    path+"\\Озвучка\\" + number + ".mp3",
-                    path+"\\Озвучка\\ПРИГЛАШАЮТПРОЙТИ.mp3",
-                    path+"\\Озвучка\\КОКНУ.mp3",
-                    path+"\\Озвучка\\"+windowName.Split("№")[1] +".mp3",
+                    path+"\\Озвучка\\НОМЕР.mp3" ,
+                    path + "\\Озвучка\\" + prefix + ".mp3"
                 };
+
+            if (nuberT>20 && nuberT < 100 && nuberT % 10 == 0)
+            { 
+                AudioFiles.Add(path + "\\Озвучка\\" + number + ".mp3"); 
             }
             else
-           if (Convert.ToInt32(number) % 100 % 10 == 0)
-            {
-                AudioFiles = new List<string>()
-                {
-                    path+"\\Озвучка\\ВНИМАНИЕ.mp3",
-                    path+"\\Озвучка\\КЛИЕНТА.mp3",
-                    path+"\\Озвучка\\НОМЕР.mp3",
-                    path+"\\Озвучка\\" + prefix + ".mp3",
-                    path+"\\Озвучка\\" + number[0] + "00.mp3",
-                    path+"\\Озвучка\\" + number[1] + "0.mp3",
-                    path+"\\Озвучка\\ПРИГЛАШАЮТПРОЙТИ.mp3",
-                    path+"\\Озвучка\\КОКНУ.mp3",
-                    path+"\\Озвучка\\"+windowName.Split("№")[1] +".mp3",
-                };
+            if (nuberT < 21)
+            { 
+                AudioFiles.Add(path + "\\Озвучка\\" + number + ".mp3");
             }
             else 
-            if (Convert.ToInt32(number) % 10 == 0 && Convert.ToInt32(number) < 100 )
-            {
-                AudioFiles = new List<string>()
-                {
-                    path+"\\Озвучка\\ВНИМАНИЕ.mp3",
-                    path+"\\Озвучка\\КЛИЕНТА.mp3",
-                    path+"\\Озвучка\\НОМЕР.mp3",
-                    path+"\\Озвучка\\" + prefix + ".mp3",
-                    path+"\\Озвучка\\" + number + ".mp3",
-                    path+"\\Озвучка\\ПРИГЛАШАЮТПРОЙТИ.mp3",
-                    path+"\\Озвучка\\КОКНУ.mp3",
-                    path+"\\Озвучка\\"+windowName.Split("№")[1] +".mp3",
-                };
+           if (nuberT % 100 == 0)
+            { 
+                AudioFiles.Add(path + "\\Озвучка\\" + number + ".mp3");
+            }
+            else
+           if (nuberT % 100 % 10 == 0)
+            { 
+                AudioFiles.Add(path + "\\Озвучка\\" + number[0] + "00.mp3");
+                AudioFiles.Add(path + "\\Озвучка\\" + number[1] + "0.mp3");
+            }
+            else 
+            if (nuberT % 10 == 0 && nuberT < 100 )
+            { 
+                AudioFiles.Add(path + "\\Озвучка\\" + number + ".mp3");
             }
             else  
-            if (Convert.ToInt32(number) % 100 > 10 && Convert.ToInt32(number) % 100 < 20)
-            {
-                AudioFiles = new List<string>()
-                 {
-                    path+"\\Озвучка\\ВНИМАНИЕ.mp3",
-                    path+"\\Озвучка\\КЛИЕНТА.mp3",
-                    path+"\\Озвучка\\НОМЕР.mp3",
-                    path+"\\Озвучка\\" + prefix + ".mp3",
-                    path+"\\Озвучка\\" + number[0] + "00.mp3",
-                    path+"\\Озвучка\\" + number[1]+number[2] + ".mp3",
-                    path+"\\Озвучка\\ПРИГЛАШАЮТПРОЙТИ.mp3",
-                    path+"\\Озвучка\\КОКНУ.mp3",
-                    path+"\\Озвучка\\"+windowName.Split("№")[1] +".mp3",
-                };
+            if (nuberT % 100 > 10 && nuberT % 100 < 20)
+            { 
+                AudioFiles.Add(path + "\\Озвучка\\" + number[0] + "00.mp3");
+                AudioFiles.Add(path + "\\Озвучка\\" + number[1] + number[2] + ".mp3");
             }
             else
-            if (Convert.ToInt32(number) % 100 < 10)
+            if (nuberT % 100 < 10)
             {
-                AudioFiles = new List<string>()
-                 {
-                    path+"\\Озвучка\\ВНИМАНИЕ.mp3",
-                    path+"\\Озвучка\\КЛИЕНТА.mp3",
-                    path+"\\Озвучка\\НОМЕР.mp3",
-                    path+"\\Озвучка\\" + prefix + ".mp3",
-                    path+"\\Озвучка\\" + number[0] + "00.mp3",
-                    path+"\\Озвучка\\" + number[2] + ".mp3",
-                    path+"\\Озвучка\\ПРИГЛАШАЮТПРОЙТИ.mp3",
-                    path+"\\Озвучка\\КОКНУ.mp3",
-                    path+"\\Озвучка\\"+windowName.Split("№")[1] +".mp3",
-                };
+                AudioFiles.Add(path + "\\Озвучка\\" + number[0] + "00.mp3");
+                AudioFiles.Add(path + "\\Озвучка\\" + number[2] + ".mp3");
             } 
             else
-            if (Convert.ToInt32(number) > 100)
-            {
-                AudioFiles = new List<string>()
-                 {
-                    path+"\\Озвучка\\ВНИМАНИЕ.mp3",
-                    path+"\\Озвучка\\КЛИЕНТА.mp3",
-                    path+"\\Озвучка\\НОМЕР.mp3",
-                    path+"\\Озвучка\\" + prefix + ".mp3",
-                    path+"\\Озвучка\\" + number[0] + "00.mp3",
-                    path+"\\Озвучка\\" + number[1] + "0.mp3",
-                    path+"\\Озвучка\\" + number[2] + ".mp3",
-                    path+"\\Озвучка\\ПРИГЛАШАЮТПРОЙТИ.mp3",
-                    path+"\\Озвучка\\КОКНУ.mp3",
-                    path+"\\Озвучка\\"+windowName.Split("№")[1] +".mp3",
-                };
+            if (nuberT > 100)
+            { 
+                AudioFiles.Add(path + "\\Озвучка\\" + number[0] + "00.mp3");
+                AudioFiles.Add(path + "\\Озвучка\\" + number[1] + "0.mp3");
+                AudioFiles.Add(path + "\\Озвучка\\" + number[2] + ".mp3");
             }
             else
-            if (Convert.ToInt32(number) > 20)
+            if (nuberT > 20)
             {
-                AudioFiles = new List<string>()
-                 {
-                    path+"\\Озвучка\\ВНИМАНИЕ.mp3",
-                    path+"\\Озвучка\\КЛИЕНТА.mp3",
-                    path+"\\Озвучка\\НОМЕР.mp3",
-                    path+"\\Озвучка\\" + prefix + ".mp3",
-                    path+"\\Озвучка\\" + number[0] + "0.mp3",
-                    path+"\\Озвучка\\" + number[1] + ".mp3",
-                    path+"\\Озвучка\\ПРИГЛАШАЮТПРОЙТИ.mp3",
-                    path+"\\Озвучка\\КОКНУ.mp3",
-                    path+"\\Озвучка\\"+windowName.Split("№")[1] +".mp3",
-                };
+                AudioFiles.Add(path + "\\Озвучка\\" + number[0] + "0.mp3");
+                AudioFiles.Add(path + "\\Озвучка\\" + number[1] + ".mp3");
             }
             else
-            if (Convert.ToInt32(number) < 20)
+            if (nuberT < 20)
             {
-                AudioFiles = new List<string>()
-                {
-                    path+"\\Озвучка\\ВНИМАНИЕ.mp3",
-                    path+"\\Озвучка\\КЛИЕНТА.mp3",
-                    path+"\\Озвучка\\НОМЕР.mp3",
-                    path+"\\Озвучка\\" + prefix + ".mp3",
-                    path+"\\Озвучка\\" + number + ".mp3",
-                    path+"\\Озвучка\\ПРИГЛАШАЮТПРОЙТИ.mp3",
-                    path+"\\Озвучка\\КОКНУ.mp3",
-                    path+"\\Озвучка\\"+windowName.Split("№")[1] +".mp3",
-                };
-            }
+                AudioFiles.Add(path + "\\Озвучка\\" + number + ".mp3");
+            } 
+            AudioFiles.Add(path + "\\Озвучка\\ПРИГЛАШАЮТПРОЙТИ.mp3");
+            AudioFiles.Add(path + "\\Озвучка\\КОКНУ.mp3");
+            AudioFiles.Add(path + "\\Озвучка\\" + windowName.Split("№")[1] + ".mp3");
+
         }
     }
 }
