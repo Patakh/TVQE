@@ -85,6 +85,7 @@ namespace TVQE
             MediaElementVideo.Children.Clear();
             mediaElementVideo = new MediaElement();
             MediaElementVideo.Children.Add(mediaElementVideo);
+            mediaElementVideo.VerticalAlignment= VerticalAlignment.Top;
             mediaElementVideo.Source = new Uri(audioFilesVideo[currentIndexVideo]);
             mediaElementVideo.LoadedBehavior = MediaState.Manual;
             mediaElementVideo.UnloadedBehavior = MediaState.Play;
@@ -103,7 +104,8 @@ namespace TVQE
             mediaElementVideo = new MediaElement();
             mediaElementVideo.Source = new Uri(audioFilesVideo[currentIndexVideo]);
             mediaElementVideo.LoadedBehavior = MediaState.Manual;
-            mediaElementVideo.UnloadedBehavior = MediaState.Play; 
+            mediaElementVideo.UnloadedBehavior = MediaState.Play;
+            mediaElementVideo.VerticalAlignment = VerticalAlignment.Top;
             MediaElementVideo.Children.Add(mediaElementVideo);
             mediaElementVideo.Play();
             mediaElementVideo.MediaEnded += (s, e) =>
@@ -169,7 +171,6 @@ namespace TVQE
                                 var windowName = context.SOfficeWindows.First(w => w.Id == TicketCall.SOfficeWindowId).WindowName;
                                 CallTickets.Add(new CallTickets(TicketCall.ServicePrefix, TicketCall.TicketNumber.ToString(), windowName));
                                 Call.Visibility = Visibility.Visible;
-                                mediaElementVideo.Visibility = Visibility.Collapsed;
                                 if (CallTickets.Count == 1) await CallTicket();
                             }
                             catch (Exception ex)
@@ -191,13 +192,12 @@ namespace TVQE
                 var tickets = Tickets.SelectTicketServed(eqContext.SOfficeScoreboards.First(r => r.ScoreboardIp == Ip).Id);
                 ListQE.Children.Clear();
                 WrapPanel wrapPanelH = new WrapPanel();
-                wrapPanelH.Width= 800;
-                wrapPanelH.Margin = new Thickness(0, 15, 0, 15);
+                wrapPanelH.Width= 900;
                 WrapPanel wrapPanel1H = new WrapPanel();
                 wrapPanel1H.HorizontalAlignment= HorizontalAlignment.Center; 
                 TextBlock textBlock1H = new TextBlock();
                 textBlock1H.FontSize = 50;
-                wrapPanel1H.Width= 400;
+                wrapPanel1H.Width= 450;
                 textBlock1H.TextAlignment = TextAlignment.Center;
                 textBlock1H.FontFamily = new FontFamily("Arial");
                 textBlock1H.Text = "КЛИЕНТ";
@@ -209,7 +209,7 @@ namespace TVQE
                 wrapPanel2H.HorizontalAlignment = HorizontalAlignment.Center;
                 TextBlock textBlock2H = new TextBlock();
                 textBlock2H.FontSize = 50;
-                wrapPanel2H.Width = 400;
+                wrapPanel2H.Width = 450;
                 textBlock2H.TextAlignment = TextAlignment.Center;
                 textBlock2H.FontFamily = new FontFamily("Arial");
                 textBlock2H.Text = "ОКНО";
@@ -224,12 +224,12 @@ namespace TVQE
                     tickets.ToList().ForEach(t =>
                     {
                         WrapPanel wrapPanel = new WrapPanel();
-                        wrapPanel.Width = 800;
+                        wrapPanel.Width = 900;
                         WrapPanel wrapPanel1 = new WrapPanel(); 
                         TextBlock textBlock1 = new TextBlock();
                         textBlock1.FontSize = 50;
-                        textBlock1.Width = 400; 
-                        textBlock1.Foreground = new SolidColorBrush(Colors.Brown);
+                        textBlock1.Width = 450; 
+                        textBlock1.Foreground = new SolidColorBrush(Colors.Red);
                         textBlock1.FontFamily = new FontFamily("Arial");
                         textBlock1.Text = t.TicketNumberFull;
                         wrapPanel1.Children.Add(textBlock1);
@@ -237,9 +237,9 @@ namespace TVQE
 
                         WrapPanel wrapPanel2 = new WrapPanel();  
                         TextBlock textBlock2 = new TextBlock();
-                        textBlock2.Foreground = new SolidColorBrush(Colors.Brown);
+                        textBlock2.Foreground = new SolidColorBrush(Colors.Red);
                         textBlock2.FontSize = 50;
-                        textBlock2.Width = 400;
+                        textBlock2.Width = 450;
                         textBlock2.FontFamily = new FontFamily("Arial");
                         textBlock2.Text = t.WindowName;
                         wrapPanel2.Children.Add(textBlock2);
@@ -342,12 +342,16 @@ namespace TVQE
         #region Вызов талона
         private async Task CallTicket()
         {
+
             MediaElement.Children.Clear();
 
             foreach (var tickets in CallTickets)
             {
                 try
                 {
+
+                    MediaElementVideo.Visibility = Visibility.Collapsed;
+                    Call.Visibility = Visibility.Visible;
                     mediaElement = new MediaElement();
                     MediaElement.Children.Clear();
                     audioFiles = tickets.AudioFiles;
@@ -389,7 +393,6 @@ namespace TVQE
                     };
                     mediaElement.Source = new Uri(audioFiles[currentIndex]);
                     mediaElement.Play();
-
                 }
                 catch (Exception ex)
                 {
@@ -397,11 +400,11 @@ namespace TVQE
                 }
             }
             else
-            {
-                if (CallTickets.Count > 0) CallTickets.Remove(CallTickets[0]);
-                await CallTicket();
+            { 
+                MediaElementVideo.Visibility = Visibility.Visible;
                 Call.Visibility = Visibility.Collapsed;
-                mediaElementVideo.Visibility = Visibility.Visible;
+                if (CallTickets.Count > 0) CallTickets.Remove(CallTickets[0]);
+                await CallTicket(); 
                 mediaElementVideo.Play();
             }
         }
