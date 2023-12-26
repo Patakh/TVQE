@@ -11,17 +11,7 @@ using System.Windows.Media.Animation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using static Function.Tickets;
-using System.Speech.Synthesis;
 using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
-using System.Net.Http.Json;
-using Microsoft.EntityFrameworkCore.Metadata;
-using System.Media;
-using static System.Net.Mime.MediaTypeNames;
-using System.Windows.Shapes;
-using System.Reflection;
 using TVQE.Models;
 
 namespace TVQE
@@ -31,19 +21,40 @@ namespace TVQE
     /// </summary>
     public partial class MainWindow : Window
     {
-        public DispatcherTimer timer;
-
-        public string Ip { get; set; }
-        MediaElement mediaElement;
-        MediaElement mediaElementVideo;
         /// <summary>
-        /// вызванные талоны
-        /// </summary> 
-        List<CallTickets> CallTickets = new List<CallTickets>();
-        List<string> audioFiles;
+        /// дата и время
+        /// </summary>
+        public DispatcherTimer Timer { get; set; }
+
+        /// <summary>
+        /// IP адрес копитера
+        /// </summary>
+        public string Ip { get; set; }
+
+        /// <summary>
+        /// элемент для запуска Аудио
+        /// </summary>
+        MediaElement MediaElementAudio { get; set; }
+
+        /// <summary>
+        /// элемент для запуска Видео
+        /// </summary>
+        MediaElement mediaElementVideo { get; set; }
+
+        /// <summary>
+        /// Вызванные талоны
+        /// </summary>
+        Queue<CallTickets> CallTickets = new Queue<CallTickets>();
+
+        ///аудио на проигриваниии
+        Queue<string> audioFiles;
+
         List<string> audioFilesVideo;
+
         private int currentIndexVideo;
+
         private int currentIndex;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -169,7 +180,7 @@ namespace TVQE
                                 EqContext context = new EqContext();
                                 var TicketCall = context.DTickets.First(t => t.Id == Convert.ToInt64(value));
                                 var windowName = context.SOfficeWindows.First(w => w.Id == TicketCall.SOfficeWindowId).WindowName;
-                                CallTickets.Add(new CallTickets(TicketCall.ServicePrefix, TicketCall.TicketNumber.ToString(), windowName));
+                                CallTickets.Enqueue(new CallTickets(TicketCall.ServicePrefix, TicketCall.TicketNumber.ToString(), windowName));
                                 Call.Visibility = Visibility.Visible;
                                 if (CallTickets.Count == 1) await CallTicket();
                             }
@@ -297,10 +308,10 @@ namespace TVQE
         {
 
             // Создаем таймер для обновления даты и времени каждую секунду
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1);
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            Timer = new DispatcherTimer();
+            Timer.Interval = TimeSpan.FromSeconds(1);
+            Timer.Tick += Timer_Tick;
+            Timer.Start();
 
             // Установка начальных значений даты и времени
             UpdateDateTime();
@@ -352,19 +363,19 @@ namespace TVQE
 
                     MediaElementVideo.Visibility = Visibility.Collapsed;
                     Call.Visibility = Visibility.Visible;
-                    mediaElement = new MediaElement();
+                    MediaElementAudio = new MediaElement();
                     MediaElement.Children.Clear();
-                    audioFiles = tickets.AudioFiles;
+                    audioFiles = tickets.QueueAudioFiles;
                     currentIndex = 0;
                     // Добавь MediaElement на контейнер (Grid, StackPanel, и т.д.)
-                    MediaElement.Children.Add(mediaElement);
+                    MediaElement.Children.Add(MediaElementAudio);
                     // Подпишись на событие MediaEnded для переключения на следующий аудиофайл
-                    mediaElement.MediaEnded += async (s, e) =>
+                    MediaElementAudio.MediaEnded += async (s, e) =>
                     {
                         await MediaElement_MediaEnded(s, e);
                     };
                     // Запуск проигрывания первого аудиофайла
-                    mediaElement.Source = new Uri(tickets.AudioFiles[currentIndex]);
+                    MediaElementAudio.Source = new Uri(tickets.QueueAudioFiles.Dequeue()+".mp3");
                       
                     CallTicketName.Text = tickets.Prefix + tickets.Number;
                     CallWindow.Text = tickets.WindowName;
@@ -384,15 +395,15 @@ namespace TVQE
                 try
                 {
                     currentIndex++;
-                    mediaElement = new MediaElement();
+                    MediaElementAudio = new MediaElement();
                     MediaElement.Children.Clear();
-                    MediaElement.Children.Add(mediaElement);
-                    mediaElement.MediaEnded += async (s, e) =>
+                    MediaElement.Children.Add(MediaElementAudio);
+                    MediaElementAudio.MediaEnded += async (s, e) =>
                     {
                         await MediaElement_MediaEnded(s, e);
                     };
-                    mediaElement.Source = new Uri(audioFiles[currentIndex]);
-                    mediaElement.Play();
+                    MediaElementAudio.Source = new Uri(audioFiles.Dequeue() + ".mp3");
+                    MediaElementAudio.Play();
                 }
                 catch (Exception ex)
                 {
@@ -402,8 +413,7 @@ namespace TVQE
             else
             { 
                 MediaElementVideo.Visibility = Visibility.Visible;
-                Call.Visibility = Visibility.Collapsed;
-                if (CallTickets.Count > 0) CallTickets.Remove(CallTickets[0]);
+                Call.Visibility = Visibility.Collapsed; 
                 await CallTicket(); 
                 mediaElementVideo.Play();
             }

@@ -1,92 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System; 
+using System.Collections.Generic; 
 
 namespace TVQE.Models
 {
     public class CallTickets
     {
-        public List<string> AudioFiles { get; set; }
-        public string Prefix {  get; set; }
+        public Queue<string> QueueAudioFiles { get; set; }
+        public string Prefix { get; set; }
         public string Number { get; set; }
         public string WindowName { get; set; }
 
-        public CallTickets(string prefix,string number,string windowName) {
+        public CallTickets(string prefix, string number, string windowName)
+        {
 
             Prefix = prefix;
             Number = number;
             WindowName = windowName;
             int nuberT = Convert.ToInt32(number);
-            var path = System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.AppDomain.CurrentDomain.BaseDirectory)));
-            AudioFiles = new List<string>()
+            var path = $"{System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.AppDomain.CurrentDomain.BaseDirectory)))}\\Озвучка\\";
+            QueueAudioFiles = new Queue<string>(new List<string>
                 {
-                    path+"\\Озвучка\\ВНИМАНИЕ.mp3",
-                    path+"\\Озвучка\\КЛИЕНТА.mp3",
-                    path+"\\Озвучка\\НОМЕР.mp3" ,
-                    path + "\\Озвучка\\" + prefix + ".mp3"
-                };
+                    $"{path}ВНИМАНИЕ",
+                    $"{path}КЛИЕНТА",
+                    $"{path}НОМЕР" ,
+                    $"{path}{prefix}"
+                });
 
-            if (nuberT>20 && nuberT < 100 && nuberT % 10 == 0)
-            { 
-                AudioFiles.Add(path + "\\Озвучка\\" + number + ".mp3"); 
-            }
-            else
-            if (nuberT < 21)
-            { 
-                AudioFiles.Add(path + "\\Озвучка\\" + number + ".mp3");
-            }
-            else 
-           if (nuberT % 100 == 0)
-            { 
-                AudioFiles.Add(path + "\\Озвучка\\" + number + ".mp3");
-            }
-            else
-           if (nuberT % 100 % 10 == 0)
-            { 
-                AudioFiles.Add(path + "\\Озвучка\\" + number[0] + "00.mp3");
-                AudioFiles.Add(path + "\\Озвучка\\" + number[1] + "0.mp3");
-            }
-            else 
-            if (nuberT % 10 == 0 && nuberT < 100 )
-            { 
-                AudioFiles.Add(path + "\\Озвучка\\" + number + ".mp3");
-            }
-            else  
-            if (nuberT % 100 > 10 && nuberT % 100 < 20)
-            { 
-                AudioFiles.Add(path + "\\Озвучка\\" + number[0] + "00.mp3");
-                AudioFiles.Add(path + "\\Озвучка\\" + number[1] + number[2] + ".mp3");
-            }
-            else
-            if (nuberT % 100 < 10)
+            //алгоритм для создания путей к файлам голоса
+
+            string[] listAudio = nuberT switch
             {
-                AudioFiles.Add(path + "\\Озвучка\\" + number[0] + "00.mp3");
-                AudioFiles.Add(path + "\\Озвучка\\" + number[2] + ".mp3");
-            } 
-            else
-            if (nuberT > 100)
-            { 
-                AudioFiles.Add(path + "\\Озвучка\\" + number[0] + "00.mp3");
-                AudioFiles.Add(path + "\\Озвучка\\" + number[1] + "0.mp3");
-                AudioFiles.Add(path + "\\Озвучка\\" + number[2] + ".mp3");
-            }
-            else
-            if (nuberT > 20)
-            {
-                AudioFiles.Add(path + "\\Озвучка\\" + number[0] + "0.mp3");
-                AudioFiles.Add(path + "\\Озвучка\\" + number[1] + ".mp3");
-            }
-            else
-            if (nuberT < 20)
-            {
-                AudioFiles.Add(path + "\\Озвучка\\" + number + ".mp3");
-            } 
-            AudioFiles.Add(path + "\\Озвучка\\ПРИГЛАШАЮТПРОЙТИ.mp3");
-            AudioFiles.Add(path + "\\Озвучка\\КОКНУ.mp3");
-            AudioFiles.Add(path + "\\Озвучка\\" + windowName.Split("№")[1] + ".mp3");
+                int n when n <= 20 || n % 10 == 0 && n < 100 || n % 100 == 0  =>
+                new string[] { path + number },
+                int n when n < 100 || n % 100 <= 20 || n % 10 == 0 =>
+                new string[]{
+                    (path + (n < 100 ? $"{number[0]}0" : $"{number[0]}00")),
+                    (path + (n < 100 ? number[1] : n % 100 <= 20 ? $"{number[1]}{number[2]}" : $"{number[1]}0"))
+                },
+                _ => new string[]{
+                    $"{path}{number[0]}00",
+                    $"{path}{number[1]}0",
+                    $"{path}{number[2]}"
+                }
+            }; 
+
+            QueueAudioFiles.Enqueue($"{path}ПРИГЛАШАЮТПРОЙТИ");
+            QueueAudioFiles.Enqueue($"{path}КОКНУ");
+            QueueAudioFiles.Enqueue($"{path}{windowName.Split("№")[1]}");
 
         }
     }
